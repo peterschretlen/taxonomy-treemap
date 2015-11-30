@@ -162,7 +162,8 @@ HTMLWidgets.widget({
     grandparent.append("text")
         .attr("x", 6)
         .attr("y", 6 - margin.grandparent)
-        .attr("dy", ".75em");
+        .attr("dy", ".75em")
+        .append("a");
 
 
     // determines if white or black will be better contrasting color
@@ -251,7 +252,7 @@ HTMLWidgets.widget({
       function display(d) {
         grandparent
             .datum( d )
-            .on("click", function(d){
+/*            .on("click", function(d){
               transition( (d.parent) ? d.parent: d );
               communicateClick( d.parent ? d.parent: d );
             } )
@@ -261,14 +262,18 @@ HTMLWidgets.widget({
           .on('mouseout', function(d) {
             hideSpan(d);
           })
-          .select("text")
-            .text(name(d))
+*/          .select("text").select("a")
+            .attr("target", "_blank") //set the link to open in an unnamed tab
+            .attr("xlink:show", "new")
+            .attr("xlink:href", function (d) {  return "http://example.com/" + d.name; })
+            .text(name(d) + " (" + formatNumber(d[valueField]) +  ")" )
             .style("fill", function (d) {
               return idealTextColor( d.color ? d.color : color(leveltwo(d)[celltext]) );
             });
 
         grandparent
           .select("rect")
+          .on("click", function(d){ transition( (d.parent) ? d.parent: d ); } )
             .style("fill",function(d){
               return (d) ?
                 ( (d.color) ? d.color : color(leveltwo(d)[celltext]) ) :
@@ -284,8 +289,8 @@ HTMLWidgets.widget({
           .enter().append("g");
 
         g.filter(function(d) { return d._children; })
-            .classed("children", true)
-            .on("click", transition);
+            .classed("children", true);
+            //.on("click", transition);
 
         g.selectAll(".child")
             .data(function(d) { return d._children || [d]; })
@@ -296,7 +301,8 @@ HTMLWidgets.widget({
         g.append("rect")
             .attr("class", "parent")
             .call(rect)
-            .on("click", function(d){
+            .on("click", transition)
+/*            .on("click", function(d){
               communicateClick(d);
             })
             .on("mouseover", function(d) {
@@ -305,13 +311,17 @@ HTMLWidgets.widget({
             .on("mouseout", function(d) {
               hideSpan(d);
             })
-          .append("title")
+*/          .append("title")
             .text(function(d) { return formatNumber(d[valueField]); });
 
         g.append("text")
             .attr("dy", ".75em")
-            .text(function(d) { return d[celltext]; })
-            .call(text);
+            .call(text)
+            .append("a")
+            .attr("target", "_blank") //set the link to open in an unnamed tab
+            .attr("xlink:show", "new")
+            .attr("xlink:href", function (d) {  return "http://example.com/" + d.name; })
+            .text(function(d) { return d[celltext] + " (" + formatNumber(d[valueField]) +  ")" ; });
 
         function transition(d) {
           if (transitioning || !d) return;
@@ -350,7 +360,7 @@ HTMLWidgets.widget({
         return g;
       }
 
-      function communicateClick(d){
+/*      function communicateClick(d){
 
         // add a hook to Shiny
         if( HTMLWidgets.shinyMode ){
@@ -363,7 +373,7 @@ HTMLWidgets.widget({
         }
 
       };
-      function showSpan(d) {
+/*      function showSpan(d) {
         if(scale && d.vColorValue){
 
           ciSpan.style('opacity', 1);
@@ -397,7 +407,7 @@ HTMLWidgets.widget({
       function hideSpan(d) {
         ciSpan.style('opacity', 0);
         ciSpan.select('rect').attr('width', 0);
-      };
+      };*/
       function text(text) {
         text.attr("x", function(d) { return xscale(d.x) + 6; })
             .attr("y", function(d) { return yscale(d.y) + 6; })
@@ -419,7 +429,7 @@ HTMLWidgets.widget({
 
       function name(d) {
         return d.parent
-            ? name(d.parent) + "." + d[celltext]
+            ? name(d.parent) + " > " + d[celltext]
             : d[celltext];
 
       }

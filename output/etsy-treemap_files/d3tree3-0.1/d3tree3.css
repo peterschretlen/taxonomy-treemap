@@ -1,5 +1,4 @@
 .d3tree3 text {
-  pointer-events: none;
   font-size: 10px;
   font-family: sans-serif;
 }
@@ -14,7 +13,6 @@
 }
 
 .d3tree3 rect {
-/*  fill: none; */
   stroke: #aaa;
   stroke-width: 1px;
 }
@@ -22,10 +20,6 @@
 .d3tree3 rect.parent,
 .d3tree3 .grandparent rect {
   stroke-width: 1px;
-}
-
-.d3tree3 .grandparent:hover rect {
-  fill: darkgrey;
 }
 
 .d3tree3 .children rect.parent,
@@ -41,18 +35,16 @@
 
 .d3tree3 .children rect.parent {
   fill-opacity:0;
-/*  stroke: #ccc;  */
   stroke-width: 0px;
 }
 .d3tree3 .children:hover rect.parent {
-  /*fill-opacity:0; */
 }
 .d3tree3 text.value-label {
   font-size: 12px;
 }
 
-.d3tree3 .children text{
-
+.d3tree3 text a:hover, text a:active {
+ text-decoration: underline;
 }
 
 .d3tree3 .children:hover rect.child {
