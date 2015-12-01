@@ -4,3 +4,4 @@
 *.log
 *.Rproj
 data/*
+plots_screencaps/*
