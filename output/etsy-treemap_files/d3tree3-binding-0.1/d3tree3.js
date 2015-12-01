@@ -265,7 +265,7 @@ HTMLWidgets.widget({
 */          .select("text").select("a")
             .attr("target", "_blank") //set the link to open in an unnamed tab
             .attr("xlink:show", "new")
-            .attr("xlink:href", function (d) {  return "http://example.com/" + d.name; })
+            .attr("xlink:href", function (d) {  return url(d) ; })
             .text(name(d) + " (" + formatNumber(d[valueField]) +  ")" )
             .style("fill", function (d) {
               return idealTextColor( d.color ? d.color : color(leveltwo(d)[celltext]) );
@@ -320,7 +320,7 @@ HTMLWidgets.widget({
             .append("a")
             .attr("target", "_blank") //set the link to open in an unnamed tab
             .attr("xlink:show", "new")
-            .attr("xlink:href", function (d) {  return "http://example.com/" + d.name; })
+            .attr("xlink:href", function (d) {  return url(d); })
             .text(function(d) { return d[celltext] + " (" + formatNumber(d[valueField]) +  ")" ; });
 
         function transition(d) {
@@ -431,7 +431,12 @@ HTMLWidgets.widget({
         return d.parent
             ? name(d.parent) + " > " + d[celltext]
             : d[celltext];
+      }
 
+      function url(d) {
+        return d.parent
+            ? url(d.parent) + "/" + d[celltext].toLowerCase().split(' ').join('-')
+            : "https://www.etsy.com/c";       
       }
 
       function leveltwo(d){
