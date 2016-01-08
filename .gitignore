@@ -5,3 +5,4 @@
 *.Rproj
 data/*
 plots_screencaps/*
+widget_tmp

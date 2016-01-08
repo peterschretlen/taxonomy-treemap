@@ -1,5 +1,22 @@
 library(jsonlite)
 library(plyr)
+library(httr)
+library(lubridate)
+
+save_taxonomy <- function(etsyAPIkey, filename = ""){
+
+  url <- paste("https://openapi.etsy.com/v2/taxonomy/buyer/get?api_key=", etsyAPIkey, sep = "")
+  taxonomy <- GET(url)
+  taxonomy_json <- content(taxonomy, as = "text") 
+
+  if(str_length(filename) == 0  ) {
+    filename <- paste("taxonomy", format(today(), format="%d%b%Y"), sep = "_")
+    filename <- paste(filename, "json", sep=".")
+  }
+  
+  write(taxonomy_json, filename)
+  
+}
 
 load_taxonomy <- function(file){
   rawdata <- fromJSON(file)
