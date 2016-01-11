@@ -8,6 +8,7 @@ source("taxonomy.R")
 source("scrape.R")
 
 scrape_counts <- FALSE
+depth <- 7
 
 # You can fetch and save a snapshot of Etsy taxonomy data to file using save_taxonomy
 # save_taxonomy(<put your ETSY API key here>)
@@ -40,8 +41,8 @@ taxonomy$count[is.na(taxonomy$count)] <- 0
 pretty_path <- str_to_title(str_replace_all(taxonomy$path, "_", " "))
 pretty_path <- str_replace_all(pretty_path, "And", "and")
 
-taxonomy_levels <- as.data.frame(str_split_fixed(pretty_path, "\\.", 8))
-names(taxonomy_levels) <- paste("pathlevel", 1:8, sep="")
+taxonomy_levels <- as.data.frame(str_split_fixed(pretty_path, "\\.", depth))
+names(taxonomy_levels) <- paste("pathlevel", 1:depth, sep="")
 
 taxonomy <- cbind(taxonomy, taxonomy_levels)
 
@@ -59,17 +60,17 @@ taxonomy_agg <- taxonomy %>% group_by( parent ) %>% dplyr::summarise( child_coun
 taxonomy_no_sub_category <- taxonomy %>% filter( path %in% taxonomy_agg$parent )
 taxonomy_no_sub_category <- left_join(taxonomy_no_sub_category, taxonomy_agg, by=c("path" = "parent"))
 taxonomy_no_sub_category$count <- taxonomy_no_sub_category$count - taxonomy_no_sub_category$child_count
-taxonomy_no_sub_category$path <- paste(taxonomy_no_sub_category$path, "-" , sep = ".")
+taxonomy_no_sub_category$path <- paste(taxonomy_no_sub_category$path, "[No Sub Category]" , sep = ".")
 taxonomy_no_sub_category$level <- as.numeric(taxonomy_no_sub_category$level) + 1
 taxonomy_no_sub_category$parent_id <- taxonomy_no_sub_category$id
 taxonomy_no_sub_category$children_ids <- ""
-taxonomy_no_sub_category$name <- "-"
+taxonomy_no_sub_category$name <- "[No Sub Category]"
 taxonomy_no_sub_category <- taxonomy_no_sub_category %>% select( -child_count, -starts_with("pathlevel" ))
 
 pretty_path <- str_to_title(str_replace_all(taxonomy_no_sub_category$path, "_", " "))
 pretty_path <- str_replace_all(pretty_path, "And", "and")
-taxonomy_levels <- as.data.frame(str_split_fixed(pretty_path, "\\.", 8))
-names(taxonomy_levels) <- paste("pathlevel", 1:8, sep="")
+taxonomy_levels <- as.data.frame(str_split_fixed(pretty_path, "\\.", depth))
+names(taxonomy_levels) <- paste("pathlevel", 1:depth, sep="")
 taxonomy_no_sub_category <- cbind(taxonomy_no_sub_category, taxonomy_levels)
 
 taxonomy <- rbind(taxonomy, taxonomy_no_sub_category)
@@ -79,7 +80,7 @@ taxonomy <- taxonomy %>% dplyr::arrange(path)
 #reset any negative counts to 0
 taxonomy$count[ taxonomy$count < 0 ] <- 0 
 
-tm <- treemap(taxonomy, index=paste("pathlevel", 1:7, sep=""), vSize="count")
+tm <- treemap(taxonomy, index=paste("pathlevel", 1:depth, sep=""), vSize="count")
 widget <- d3tree3( tm, rootname = "Etsy" , width="1024px", height="750px")
 
 orig_dir <- setwd("widget_tmp/")
