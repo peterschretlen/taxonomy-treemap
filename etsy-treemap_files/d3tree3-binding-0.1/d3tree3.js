@@ -434,9 +434,16 @@ HTMLWidgets.widget({
       }
 
       function url(d) {
-        return d.parent
-            ? url(d.parent) + "/" + d[celltext].toLowerCase().split(' ').join('-')
-            : "https://www.etsy.com/c";       
+      
+        if(!d.parent){
+          return "https://www.etsy.com/c";
+        }
+
+        if(!d[celltext] || d[celltext] === "[No Sub Category]"){
+          return url(d.parent);
+        }
+        
+        return url(d.parent) + "/" + d[celltext].toLowerCase().split(' ').join('-');
       }
 
       function leveltwo(d){
